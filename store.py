@@ -18,21 +18,23 @@ class Store:
         """get total product quantity"""
         return sum(product.get_quantity() for product in self.products)
 
+    def all_active_products(self) -> int:
+        """get total quantity of all active products"""
+        return sum(
+            product.get_quantity()
+            for product in self.products
+            if product.is_active()
+        )
+
     def get_all_products(self) -> List[Product]:
-        """get all products that are active"""
+        """get all active products"""
         return [product for product in self.products if product.is_active()]
 
     def order(self, shopping_list) -> float:
-        """order a new product"""
+        """order products from the shopping list"""
         total_price = 0
 
         for product, quantity in shopping_list:
-            if product.get_quantity() < quantity:
-                raise Exception(f"Not enough stock for {product.name}")
-
-            price = quantity * product.price
-            total_price += price
-
-            product.set_quantity(product.get_quantity() - quantity)
+            total_price += product.buy(quantity)
 
         return total_price

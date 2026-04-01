@@ -1,13 +1,21 @@
-from helpers import format_currency
+from helpers import *
 
 
 class Product:
     def __init__(self, name, price, quantity):
+        validate_not_empty(name, "name")
+        validate_non_negative(price, "price")
+        validate_non_negative(quantity, "quantity")
+
         self.name = name
         self.price = price
         self.quantity = quantity
         self.active = True
-        self.formatted_price = format_currency(self.price)
+
+    @property
+    def formatted_price(self):
+        """format the price"""
+        return format_currency(self.price)
 
     def get_quantity(self) -> int:
         """get product quantity"""
@@ -37,15 +45,14 @@ class Product:
 
     def buy(self, quantity) -> float:
         """buy a product and return the total price"""
-        if not self.active:
-            raise Exception(f"{self.name} is not active")
 
-        if quantity > self.quantity:
-            raise Exception(f"Not enough stock for {self.name}")
+        validate_non_negative(quantity, "quantity")
+
+        if not self.active:
+            raise ValueError(f"{self.name} is not active")
+
+        validate_not_enough_in_stock(quantity, self.quantity, self.name)
 
         self.quantity -= quantity
-
-        if self.quantity == 0:
-            self.deactivate()
 
         return quantity * self.price
