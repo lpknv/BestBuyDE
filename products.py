@@ -15,6 +15,9 @@ class Product:
 
     def set_quantity(self, quantity):
         """set product quantity"""
+        if quantity < 0:
+            raise Exception("Quantity cannot be negative")
+
         self.quantity = quantity
         if self.quantity <= 0:
             self.deactivate()
@@ -37,6 +40,9 @@ class Product:
 
     def buy(self, quantity) -> float:
         """buy a product and return the total price"""
+        if quantity <= 0:
+            raise Exception("Quantity must be greater than 0")
+
         if not self.active:
             raise Exception(f"{self.name} is not active")
 
